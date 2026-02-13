@@ -12,40 +12,39 @@
  */
 const polishNotationEvaluator = (expression) => {
     const tokens = expression.split(' ');
-    const stack = [];
 
-    for (let i = tokens.length - 1; i >= 0; i--) {
-        const token = tokens[i];
-
+    const stack = tokens.reduceRight((stack, token) => {
         // Пропускаем пустые строки
-        if (token === '') continue;
+        if (token === '') return stack;
 
         // Если токен - число
         if (!isNaN(token)) {
             stack.push(Number(token));
-        } else {
-            // Токен - оператор
-            const operand1 = stack.pop();
-            const operand2 = stack.pop();
-
-            switch (token) {
-                case '+':
-                    stack.push(operand1 + operand2);
-                    break;
-                case '-':
-                    stack.push(operand1 - operand2);
-                    break;
-                case '*':
-                    stack.push(operand1 * operand2);
-                    break;
-                case '/':
-                    stack.push(operand1 / operand2);
-                    break;
-                default:
-                    console.error(`Неизвестный оператор: ${token}`);
-            }
+            return stack;
         }
-    }
+        // Токен - оператор
+        const operand1 = stack.pop();
+        const operand2 = stack.pop();
+
+        switch (token) {
+            case '+':
+                stack.push(operand1 + operand2);
+                break;
+            case '-':
+                stack.push(operand1 - operand2);
+                break;
+            case '*':
+                stack.push(operand1 * operand2);
+                break;
+            case '/':
+                stack.push(operand1 / operand2);
+                break;
+            default:
+                console.error(`Неизвестный оператор: ${token}`);
+        }
+
+        return stack;
+    }, [])
 
     // Финальный результат лежит в вершине стека
     return stack[0];
